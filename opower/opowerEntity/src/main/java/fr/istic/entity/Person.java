@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -46,6 +47,10 @@ public class Person implements Serializable {
 		this.homes = new ArrayList<Home>();
 		this.friends = new ArrayList<Person>();
 		this.devices = new ArrayList<ElectronicDevice>();
+	}
+	
+	public String toString() {
+		return id + " - " + firstName + " - " + lastName + " - " + mail;
 	}
 
 	public long getId() {

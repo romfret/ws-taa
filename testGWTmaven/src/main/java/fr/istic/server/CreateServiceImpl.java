@@ -1,5 +1,6 @@
 package fr.istic.server;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -62,6 +63,21 @@ public class CreateServiceImpl extends RemoteServiceServlet implements
 			System.out.println(person.getFirstName());
 		}
 		return persons;
+	}
+	
+	
+	/***
+	 * Retourne un affichage de la table person
+	 */
+	public String getAllOfPerson() {
+		init();
+		List<Person> persons = serv.getPersons();
+		String res = "";
+		for (Person person : persons) {
+			res += person.toString() + "\n";
+		}
+		
+		return res;
 	}
 
 	/**

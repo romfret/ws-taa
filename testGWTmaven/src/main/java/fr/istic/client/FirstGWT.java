@@ -225,26 +225,75 @@ public class FirstGWT implements EntryPoint {
 						});
 			}
 		});
-		
-		
+
 		// TEST DE getPerson() avec le boutton addHome
 		addHomeButton.addClickHandler(new ClickHandler() {
-			
+
 			public void onClick(ClickEvent event) {
-				createService.getPersons(new AsyncCallback<List<Person>>() {
+
+				/*
+				 * 
+				 * 
+				 * http://www.developpez.net/forums/d95178/java/general-java/
+				 * persistance
+				 * /hibernate/hibernate-3-0-lazyinitializationexception/
+				 * 
+				 * salut
+				 * 
+				 * - Pourquoi?? Est ce que cela vient du fait que la session
+				 * dans laquelle je travaille n'est pas la même que celle qui à
+				 * loadé initialement le "MemberDAO"??
+				 * 
+				 * --> en fait l'objet que tu passes en paramètre n'est plus en
+				 * état persistant, et lorsque tu appel une collection mappé
+				 * avec une initialisation à "lazy=true" sur un objet détaché,
+				 * ca génère une LazyInitializationException.
+				 * 
+				 * - Pourquoi dois je rattacher l'objet "accessDAO" et non pas
+				 * le "membreDAO" directement?? En effet, l'instruction suivante
+				 * ne fonctionne pas
+				 * 
+				 * --> la méthode "session.lock(memberDAO, LockMode.NONE); " ne
+				 * rattache pas les associations à la session sauf si c'est
+				 * indiqué spécifiquement dans l'association par la propriété
+				 * " cascade='lock' ".
+				 * 
+				 * En gros la propriété access n'est pas persisté et la méthode
+				 * getAccess() retourne simplement la liste que contenait
+				 * membreDAO (ie surement une liste vide). Comme ta requete
+				 * indique une contrainte IN sur une liste qui ne contient rien,
+				 * ca te retourne une liste vide.
+				 */
+				// createService.getPersons(new AsyncCallback<List<Person>>() {
+				//
+				// public void onFailure(Throwable caught) {
+				// Window.alert("Gros fail du test\n" + caught.toString());
+				// }
+				//
+				// public void onSuccess(List<Person> persons) {
+				//
+				// String textRes = "";
+				// for (Person person : persons) {
+				// textRes += "- " + person.getFirstName() + "\n";
+				// }
+				// Window.alert(textRes);
+				// }
+				//
+				// });
+
+				
+				// It works !!
+				createService.getAllOfPerson(new AsyncCallback<String>() {
 
 					public void onFailure(Throwable caught) {
-						Window.alert("Gros fail du test");
+						Window.alert(caught.toString());
+
 					}
 
-					public void onSuccess(List<Person> persons) {
-						String textRes = "";
-						for (Person person : persons) {
-							textRes += "- " + person.getFirstName() + "\n"; 
-						}
-						Window.alert(textRes);
+					public void onSuccess(String result) {
+						Window.alert(result);
 					}
-					
+
 				});
 			}
 		});

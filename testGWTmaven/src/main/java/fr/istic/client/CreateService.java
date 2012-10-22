@@ -17,4 +17,5 @@ public interface CreateService extends RemoteService{
 	public void addHome(String name, String address, String town, String zip, long personId);
 	
 	public List<Person> getPersons();
+	public String getAllOfPerson();
 }
