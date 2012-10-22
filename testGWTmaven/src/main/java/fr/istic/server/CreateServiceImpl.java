@@ -1,6 +1,7 @@
 package fr.istic.server;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -11,6 +12,7 @@ import business.BusinessInterface;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import fr.istic.client.CreateService;
+import fr.istic.entity.Person;
 
 public class CreateServiceImpl extends RemoteServiceServlet implements
 		CreateService {
@@ -52,6 +54,15 @@ public class CreateServiceImpl extends RemoteServiceServlet implements
 		init();
 		serv.createHome(name, address, town, zip, personId);
 	}
+	
+	public List<Person> getPersons() {
+		init();
+		List<Person> persons = serv.getPersons();
+		for (Person person : persons) {
+			System.out.println(person.getFirstName());
+		}
+		return persons;
+	}
 
 	/**
 	 * Use Smart Factory by default.
@@ -91,5 +102,4 @@ public class CreateServiceImpl extends RemoteServiceServlet implements
 		}
 		return prop;
 	}
-
 }

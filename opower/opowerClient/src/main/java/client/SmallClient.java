@@ -1,12 +1,14 @@
 package client;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import business.BusinessInterface;
+import fr.istic.entity.Person;
 
 public class SmallClient {
 	/**
@@ -22,6 +24,11 @@ public class SmallClient {
 		BusinessInterface serv = (BusinessInterface) getInitialContext().lookup("businessImpl");
 		serv.init();
 		serv.createPerson("lastName", "firstName", "email");
+		
+		List<Person> persons = serv.getPersons();
+		for (Person person : persons) {
+			System.out.println(person.getFirstName());
+		}
 	}
 
 	/**

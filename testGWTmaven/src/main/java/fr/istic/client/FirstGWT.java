@@ -1,5 +1,7 @@
 package fr.istic.client;
 
+import java.util.List;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -14,6 +16,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
+
+import fr.istic.entity.Person;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -219,6 +223,29 @@ public class FirstGWT implements EntryPoint {
 
 							}
 						});
+			}
+		});
+		
+		
+		// TEST DE getPerson() avec le boutton addHome
+		addHomeButton.addClickHandler(new ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+				createService.getPersons(new AsyncCallback<List<Person>>() {
+
+					public void onFailure(Throwable caught) {
+						Window.alert("Gros fail du test");
+					}
+
+					public void onSuccess(List<Person> persons) {
+						String textRes = "";
+						for (Person person : persons) {
+							textRes += "- " + person.getFirstName() + "\n"; 
+						}
+						Window.alert(textRes);
+					}
+					
+				});
 			}
 		});
 

@@ -1,5 +1,5 @@
 eclipse.preferences.version=1
 jarsExcludedFromWebInfLib=
-lastWarOutDir=W\:/taa-tools/tomcat/webapps
+lastWarOutDir=/home/taira/workspace/taa-opowergwt-git/ws-taa/testGWTmaven/target/testGWTmaven-1.0-SNAPSHOT
 warSrcDir=src/main/webapp
 warSrcDirIsOutput=false

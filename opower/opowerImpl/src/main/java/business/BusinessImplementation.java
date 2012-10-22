@@ -4,8 +4,10 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
-import business.BusinessInterface;
 import fr.istic.entity.ElectronicDevice;
 import fr.istic.entity.Heater;
 import fr.istic.entity.Home;
@@ -117,9 +119,11 @@ public class BusinessImplementation implements BusinessInterface  {
 	}
 
     
-	public List<Person> findPersons() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Person> getPersons() {
+		CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		Root<Person> person = criteriaQuery.from(Person.class);
+		return this.entityManager.createQuery(criteriaQuery.select(person)).getResultList();
 	}
 
 	public Person findPersonWithItsGivenName(String name) {

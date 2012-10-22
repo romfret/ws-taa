@@ -20,7 +20,7 @@ public interface BusinessInterface {
      * Find all persons.
      * @return list of persons
      */
-    public List<Person> findPersons();
+    public List<Person> getPersons();
 
     /**
      * Allows to find an person by its name.

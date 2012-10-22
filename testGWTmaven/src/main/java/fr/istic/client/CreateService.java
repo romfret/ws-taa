@@ -15,4 +15,6 @@ public interface CreateService extends RemoteService{
 	public void addElectronicDevice(String name, String type, int power, long personId );
 	public void addHeater(String name, String model, int power, long homeId);
 	public void addHome(String name, String address, String town, String zip, long personId);
+	
+	public List<Person> getPersons();
 }
