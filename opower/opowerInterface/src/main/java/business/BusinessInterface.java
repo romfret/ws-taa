@@ -14,7 +14,7 @@ public interface BusinessInterface {
      */
 	public void init();
 	
-	public void createPerson(String lastName, String firstName, String email);
+	public String createPerson(String lastName, String firstName, String email);
 
     /**
      * Find all persons.
@@ -23,15 +23,19 @@ public interface BusinessInterface {
     public List<Person> getPersons();
 
     /**
-     * Allows to find an person by its name.
-     * @param name the given name
+     * Allows to find an person by its id.
+     * @param number id of the person
      * @return the given person, else null
      */
-    public Person findPersonWithItsGivenName(final String name);
+    public Person findPersonWithHisID(final long id);
 
+    /**
+     * Retrouve l'id d'une personne grace a son adresse mail
+     */
+    public String findPersonIdWithMailAddress(final String mail);
     
     public void createElectronicDevice(String name, String type, int power, long personId );
 	public void createHeater(String name, String model, int power, long homeId);
-	public void createHome(String name, String address, String town, String zip, long personId);
+	public String createHome(String name, String address, String town, String zip, long personId);
 	
 }

@@ -3,6 +3,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -77,12 +78,13 @@ public class BusinessImplementation implements BusinessInterface  {
         this.entityManager.persist(florent);
     }
 
-    public void createPerson(String lastName, String firstName, String email) {
+    public String createPerson(String lastName, String firstName, String email) {
         Person person = new Person();
         person.setFirstName(firstName);
         person.setLastName(lastName);
         person.setMail(email);
         this.entityManager.persist(person);
+        return "" + person.getId();
     }
 
 	public void createElectronicDevice(String name, String type, int power,
@@ -106,16 +108,19 @@ public class BusinessImplementation implements BusinessInterface  {
         this.entityManager.persist(heater);
 	}
 
-	public void createHome(String name, String address, String town,
+	public String createHome(String name, String address, String town,
 			String zip, long personId) {
+		Person owner = findPersonWithHisID(personId); 
+		if(owner == null)
+			return "Identifiant de personne inconnu";
 		Home home = new Home();
 		home.setName(name);
 		home.setAddress(address);
 		home.setTown(town);
 		home.setZip(zip);
-		Person owner = new Person();
 		home.setOwner(owner);
         this.entityManager.persist(home);
+        return "Maison ajoutée";
 	}
 
     
@@ -126,8 +131,28 @@ public class BusinessImplementation implements BusinessInterface  {
 		return this.entityManager.createQuery(criteriaQuery.select(person)).getResultList();
 	}
 
-	public Person findPersonWithItsGivenName(String name) {
-		return null;
+	public Person findPersonWithHisID(long id) {
+        CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+        Root<Person> person = criteriaQuery.from(Person.class);
+        criteriaQuery.select(person).where(criteriaBuilder.equal(person.get("id"), id));
+        try {
+            return this.entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+	}
+	
+	public String findPersonIdWithMailAddress(final String mail) {
+        CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+        Root<Person> person = criteriaQuery.from(Person.class);
+        criteriaQuery.select(person).where(criteriaBuilder.equal(person.get("mail"), mail));
+        try {
+            return "" + this.entityManager.createQuery(criteriaQuery).getSingleResult().getId();
+        } catch (NoResultException nre) {
+            return "Aucun identifiant trouvé";
+        }
 	}
 	
 }

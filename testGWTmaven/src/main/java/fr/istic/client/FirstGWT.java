@@ -1,7 +1,5 @@
 package fr.istic.client;
 
-import java.util.List;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -11,13 +9,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
-
-import fr.istic.entity.Person;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -62,10 +57,28 @@ public class FirstGWT implements EntryPoint {
 		addUserPanel.add(mailAddUserField, 70, 80);
 		addUserPanel.add(addUserButton, 30, 120);
 		// --------------------------------------------
+		
+		// ------------- GET USER ID PANEL ------------
+		final Button getUserIdButton = new Button("Chercher");
+		getUserIdButton.addStyleName("sendButton");
+
+		Label mailGetUserIdLabel = new Label("Votre E-Mail :");
+		final TextBox mailGetUserIdField = new TextBox();
+		mailGetUserIdField.setText("");
+
+		AbsolutePanel getUserIdPanel = new AbsolutePanel();
+		getUserIdPanel.add(mailGetUserIdLabel, 10, 20);
+		getUserIdPanel.add(mailGetUserIdField, 70, 20);
+		getUserIdPanel.add(getUserIdButton, 30, 120);
+		// --------------------------------------------
 
 		// -------------- ADD HOME PANEL -------------
 		final Button addHomeButton = new Button("Ajouter le domicile");
 		addHomeButton.addStyleName("sendButton");
+
+		Label personIdAddHomeLabel = new Label("Votre identifiant :");
+		final TextBox personIdAddHomeField = new TextBox();
+		personIdAddHomeField.setText("");
 
 		Label nameAddHomeLabel = new Label("Nom :");
 		final TextBox nameAddHomeField = new TextBox();
@@ -93,6 +106,9 @@ public class FirstGWT implements EntryPoint {
 		addHomePanel.add(townAddHomeLabel, 10, 110);
 		addHomePanel.add(townAddHomeField, 70, 110);
 		addHomePanel.add(addHomeButton, 30, 150);
+
+		addHomePanel.add(personIdAddHomeLabel, 10, 190);
+		addHomePanel.add(personIdAddHomeField, 70, 200);
 		// --------------------------------------------
 
 		// -------------- ADD ELECTRONIC DEVICE PANEL -------------
@@ -158,6 +174,15 @@ public class FirstGWT implements EntryPoint {
 		userTabPanel.add(addUserPanel, "Add");
 		// userTabPanel.add(null, "Delete");
 		// ------------------------------------------
+		
+		// ---------- USER ID TAB PANEL -------------
+		TabLayoutPanel userIdTabPanel = new TabLayoutPanel(1, Unit.EM);
+		userIdTabPanel.setAnimationDuration(1000);
+		userIdTabPanel.setWidth("300px");
+		userIdTabPanel.setHeight("300px");
+
+		userIdTabPanel.add(getUserIdPanel, "Add");
+		// ------------------------------------------
 
 		// ------------ HOME TAB PANEL --------------
 		TabLayoutPanel homeTabPanel = new TabLayoutPanel(1, Unit.EM);
@@ -199,6 +224,7 @@ public class FirstGWT implements EntryPoint {
 		mainTabPanel.add(homeTabPanel, "Home");
 		mainTabPanel.add(electronicDeviceTabPanel, "Electronic Device");
 		mainTabPanel.add(heaterTabPanel, "Heater");
+		mainTabPanel.add(getUserIdPanel, "Retrieve ID");
 
 		mainTabPanel.setAnimationDuration(1000);
 		mainTabPanel.addStyleName("tabPanelExample1");
@@ -212,10 +238,11 @@ public class FirstGWT implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				createService.addUser(firstNameAddUserField.getText(),
 						lastNameAddUserField.getText(),
-						mailAddUserField.getText(), new AsyncCallback<Void>() {
+						mailAddUserField.getText(),
+						new AsyncCallback<String>() {
 
-							public void onSuccess(Void arg0) {
-								Window.alert("succes");
+							public void onSuccess(String result) {
+								Window.alert("succes\n\nVeuillez noter votre ID, celui-si vous sera demandé par la suite : " + result);
 							}
 
 							public void onFailure(Throwable arg0) {
@@ -226,74 +253,39 @@ public class FirstGWT implements EntryPoint {
 			}
 		});
 
-		// TEST DE getPerson() avec le boutton addHome
 		addHomeButton.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
+				createService.addHome(nameAddHomeField.getText(),
+						addressAddHomeField.getText(),
+						townAddHomeField.getText(), zipAddHomeField.getText(),
+						Long.parseLong(personIdAddHomeField.getText()),
+						new AsyncCallback<String>() {
 
-				/*
-				 * 
-				 * 
-				 * http://www.developpez.net/forums/d95178/java/general-java/
-				 * persistance
-				 * /hibernate/hibernate-3-0-lazyinitializationexception/
-				 * 
-				 * salut
-				 * 
-				 * - Pourquoi?? Est ce que cela vient du fait que la session
-				 * dans laquelle je travaille n'est pas la même que celle qui à
-				 * loadé initialement le "MemberDAO"??
-				 * 
-				 * --> en fait l'objet que tu passes en paramètre n'est plus en
-				 * état persistant, et lorsque tu appel une collection mappé
-				 * avec une initialisation à "lazy=true" sur un objet détaché,
-				 * ca génère une LazyInitializationException.
-				 * 
-				 * - Pourquoi dois je rattacher l'objet "accessDAO" et non pas
-				 * le "membreDAO" directement?? En effet, l'instruction suivante
-				 * ne fonctionne pas
-				 * 
-				 * --> la méthode "session.lock(memberDAO, LockMode.NONE); " ne
-				 * rattache pas les associations à la session sauf si c'est
-				 * indiqué spécifiquement dans l'association par la propriété
-				 * " cascade='lock' ".
-				 * 
-				 * En gros la propriété access n'est pas persisté et la méthode
-				 * getAccess() retourne simplement la liste que contenait
-				 * membreDAO (ie surement une liste vide). Comme ta requete
-				 * indique une contrainte IN sur une liste qui ne contient rien,
-				 * ca te retourne une liste vide.
-				 */
-				// createService.getPersons(new AsyncCallback<List<Person>>() {
-				//
-				// public void onFailure(Throwable caught) {
-				// Window.alert("Gros fail du test\n" + caught.toString());
-				// }
-				//
-				// public void onSuccess(List<Person> persons) {
-				//
-				// String textRes = "";
-				// for (Person person : persons) {
-				// textRes += "- " + person.getFirstName() + "\n";
-				// }
-				// Window.alert(textRes);
-				// }
-				//
-				// });
+							public void onFailure(Throwable caught) {
+								Window.alert("Erreur de connection.\n\n" + caught.toString());
+							}
 
-				
-				// It works !!
-				createService.getAllOfPerson(new AsyncCallback<String>() {
+							public void onSuccess(String result) {
+								Window.alert(result);
+							}
+						});
+			}
+		});
+		
+		getUserIdButton.addClickHandler(new ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+				createService.getPersonIdWithMailAddress(mailGetUserIdField.getText(), new AsyncCallback<String>() {
 
 					public void onFailure(Throwable caught) {
-						Window.alert(caught.toString());
-
+						Window.alert("Erreur de connection.\n\n" + caught.toString());
 					}
 
 					public void onSuccess(String result) {
-						Window.alert(result);
+						Window.alert("Voici l'id associé à votre adresse mail : " + result);
 					}
-
+					
 				});
 			}
 		});

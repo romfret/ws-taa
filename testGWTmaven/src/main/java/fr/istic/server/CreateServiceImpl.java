@@ -1,6 +1,5 @@
 package fr.istic.server;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -34,9 +33,9 @@ public class CreateServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 
-	public void addUser(String firstName, String lastName, String email) {
+	public String addUser(String firstName, String lastName, String email) {
 		init();
-		serv.createPerson(lastName, firstName, email);
+		return serv.createPerson(lastName, firstName, email);
 	}
 
 	public void addElectronicDevice(String name, String type, int power,
@@ -50,10 +49,10 @@ public class CreateServiceImpl extends RemoteServiceServlet implements
 		serv.createHeater(name, model, power, homeId);
 	}
 
-	public void addHome(String name, String address, String town, String zip,
+	public String addHome(String name, String address, String town, String zip,
 			long personId) {
 		init();
-		serv.createHome(name, address, town, zip, personId);
+		return serv.createHome(name, address, town, zip, personId);
 	}
 	
 	public List<Person> getPersons() {
@@ -78,6 +77,14 @@ public class CreateServiceImpl extends RemoteServiceServlet implements
 		}
 		
 		return res;
+	}
+	
+	/**
+	 * Retrouve l'id d'une personne grace a son adresse mail
+	 */
+	public String getPersonIdWithMailAddress(String mail) {
+		init();
+		return serv.findPersonIdWithMailAddress(mail);
 	}
 
 	/**
