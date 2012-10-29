@@ -28,14 +28,6 @@ public class BusinessImplementation implements BusinessInterface  {
     private EntityManager entityManager;
     
     public void init() {
-    	// Do nothing if already defined
-        /*
-         * Person test = findPersonWithItsGivenName("Florent");
-        if (test != null) {
-            return;
-        }
-        */
-        // The first employee
         Person florent = new Person();
         florent.setFirstName("Florent");
         florent.setLastName("Dupond");
@@ -93,8 +85,7 @@ public class BusinessImplementation implements BusinessInterface  {
 		device.setName(name);
 		device.setType(type);
 		device.setPower(power);
-		Person owner = new Person();
-		device.setOwner(owner);
+		device.setOwner(this.findPersonWithHisID(personId));
         this.entityManager.persist(device);
 	}
 
@@ -103,8 +94,7 @@ public class BusinessImplementation implements BusinessInterface  {
 		heater.setName(name);
 		heater.setModel(model);
 		heater.setPower(power);
-		Home home = new Home();
-		heater.setHome(home);
+		heater.setHome(this.getHomeById(homeId));
         this.entityManager.persist(heater);
 	}
 
@@ -153,6 +143,23 @@ public class BusinessImplementation implements BusinessInterface  {
         } catch (NoResultException nre) {
             return "Aucun identifiant trouvé";
         }
+	}
+
+	public void addFriendToUser(long idUser, long idFriend) {
+		Person user = this.findPersonWithHisID(idUser);
+		user.addFriend(this.findPersonWithHisID(idFriend));
+	}
+	
+	public Home getHomeById(long homeId){
+		  CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
+	        CriteriaQuery<Home> criteriaQuery = criteriaBuilder.createQuery(Home.class);
+	        Root<Home> home = criteriaQuery.from(Home.class);
+	        criteriaQuery.select(home).where(criteriaBuilder.equal(home.get("id"), homeId));
+	        try {
+	            return this.entityManager.createQuery(criteriaQuery).getSingleResult();
+	        } catch (NoResultException nre) {
+	            return null;
+	        }
 	}
 	
 }

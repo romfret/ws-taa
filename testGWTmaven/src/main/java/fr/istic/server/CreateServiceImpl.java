@@ -87,6 +87,11 @@ public class CreateServiceImpl extends RemoteServiceServlet implements
 		return serv.findPersonIdWithMailAddress(mail);
 	}
 
+	public void addFriendToUser(long idUser, long idFriend) {
+		init();
+		serv.addFriendToUser(idUser, idFriend);
+	}
+	
 	/**
 	 * Use Smart Factory by default.
 	 */
@@ -125,4 +130,6 @@ public class CreateServiceImpl extends RemoteServiceServlet implements
 		}
 		return prop;
 	}
+
+
 }

@@ -18,4 +18,7 @@ public interface CreateService extends RemoteService{
 	public String getAllOfPerson();
 	
 	public String getPersonIdWithMailAddress(String mail);
+	
+	public void addFriendToUser(long idUser, long idFriend);
+	
 }

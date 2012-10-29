@@ -37,5 +37,7 @@ public interface BusinessInterface {
     public void createElectronicDevice(String name, String type, int power, long personId );
 	public void createHeater(String name, String model, int power, long homeId);
 	public String createHome(String name, String address, String town, String zip, long personId);
+
+	public void addFriendToUser(long idUser, long idFriend);
 	
 }
