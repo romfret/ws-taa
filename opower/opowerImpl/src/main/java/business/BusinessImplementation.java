@@ -1,4 +1,5 @@
 package business;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -70,39 +71,45 @@ public class BusinessImplementation implements BusinessInterface  {
         this.entityManager.persist(florent);
     }
 
-    public String createPerson(String lastName, String firstName, String email) {
+    public int createPerson(String lastName, String firstName, String email) {
         Person person = new Person();
         person.setFirstName(firstName);
         person.setLastName(lastName);
         person.setMail(email);
         this.entityManager.persist(person);
-        return "" + person.getId();
+        return 0;
     }
 
-	public void createElectronicDevice(String name, String type, int power,
+	public int createElectronicDevice(String name, String type, int power,
 			long personId) {
 		ElectronicDevice device = new ElectronicDevice();
 		device.setName(name);
 		device.setType(type);
 		device.setPower(power);
-		device.setOwner(this.findPersonWithHisID(personId));
+		Person p = this.getPersonById(personId);
+		if(p == null) return -1;
+		device.setOwner(p);
         this.entityManager.persist(device);
+        return 0;
 	}
 
-	public void createHeater(String name, String model, int power, long homeId) {
+	public int createHeater(String name, String model, int power, long homeId) {
 		Heater heater = new Heater();
 		heater.setName(name);
 		heater.setModel(model);
 		heater.setPower(power);
-		heater.setHome(this.getHomeById(homeId));
+		Home h = this.getHomeById(homeId);
+		if(h == null) return -1;
+		heater.setHome(h);
         this.entityManager.persist(heater);
+        return 0;
 	}
 
-	public String createHome(String name, String address, String town,
+	public int createHome(String name, String address, String town,
 			String zip, long personId) {
-		Person owner = findPersonWithHisID(personId); 
+		Person owner = getPersonById(personId); 
 		if(owner == null)
-			return "Identifiant de personne inconnu";
+			return -1;
 		Home home = new Home();
 		home.setName(name);
 		home.setAddress(address);
@@ -110,7 +117,7 @@ public class BusinessImplementation implements BusinessInterface  {
 		home.setZip(zip);
 		home.setOwner(owner);
         this.entityManager.persist(home);
-        return "Maison ajoutée";
+        return 0;
 	}
 
     
@@ -121,7 +128,7 @@ public class BusinessImplementation implements BusinessInterface  {
 		return this.entityManager.createQuery(criteriaQuery.select(person)).getResultList();
 	}
 
-	public Person findPersonWithHisID(long id) {
+	public Person getPersonById(long id) {
         CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
         Root<Person> person = criteriaQuery.from(Person.class);
@@ -133,21 +140,25 @@ public class BusinessImplementation implements BusinessInterface  {
         }
 	}
 	
-	public String findPersonIdWithMailAddress(final String mail) {
+	public long getPersonIdByMailAddress(final String mail) {
         CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
         Root<Person> person = criteriaQuery.from(Person.class);
         criteriaQuery.select(person).where(criteriaBuilder.equal(person.get("mail"), mail));
         try {
-            return "" + this.entityManager.createQuery(criteriaQuery).getSingleResult().getId();
+            return this.entityManager.createQuery(criteriaQuery).getSingleResult().getId();
         } catch (NoResultException nre) {
-            return "Aucun identifiant trouvé";
+            return (Long) null;
         }
 	}
 
-	public void addFriendToUser(long idUser, long idFriend) {
-		Person user = this.findPersonWithHisID(idUser);
-		user.addFriend(this.findPersonWithHisID(idFriend));
+	public int addFriendToUser(long idUser, long idFriend) {
+		Person user = this.getPersonById(idUser);
+		if (user == null) return -1;
+		Person friend = this.getPersonById(idFriend);
+		if (friend == null) return -2;
+		user.addFriend(friend);
+		return 0;
 	}
 	
 	public Home getHomeById(long homeId){
@@ -161,5 +172,59 @@ public class BusinessImplementation implements BusinessInterface  {
 	            return null;
 	        }
 	}
+
+	public int compareOverallConsummation(long person1Id, long person2Id) {
+
+		int diffConsHeaters = compareHeatersConsummation(person1Id, person2Id);
+		int diffConsDevices = compareElectronicDevicesConsummation(person1Id, person2Id);
+		
+		return diffConsHeaters + diffConsDevices;
+		
+	}
+
+	public int compareHeatersConsummation(long person1Id, long person2Id) {
+		
+		int person1Cons = getHeatersCons(person1Id);
+		int person2Cons = getHeatersCons(person2Id);
+		
+		return person2Cons - person1Cons ;
+	}
+
+	public int compareElectronicDevicesConsummation(long person1Id,
+			long person2Id) {
+
+		int person1Cons = getDevicesCons(person1Id);
+		int person2Cons = getDevicesCons(person2Id);
+		
+		return person2Cons - person1Cons ;
+	}
+
+	private int getDevicesCons(long personId) {
+		int personCons = 0;
+		Person person = this.getPersonById(personId);
+		List<ElectronicDevice> devices = person.getDevices();
+		Iterator<ElectronicDevice> iter = devices.iterator();
+		while(iter.hasNext()){
+			ElectronicDevice device = iter.next();
+			personCons += device.getPower();
+		}
+		return personCons;
+	}
 	
+	private int getHeatersCons(long personId) {
+		int heatersCons = 0;
+		Person person = this.getPersonById(personId);
+		List<Home> devices = person.getHomes();
+		Iterator<Home> iterHome = devices.iterator();
+		while(iterHome.hasNext()){
+			Home home = iterHome.next();
+			List<Heater> heaters = home.getHeaters();
+			Iterator<Heater> iterHeater = heaters.iterator();
+			while(iterHeater.hasNext()){
+				Heater heater = iterHeater.next();
+				heatersCons += heater.getPower();
+			}
+		}
+		return heatersCons;
+	}
 }

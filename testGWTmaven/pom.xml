@@ -18,7 +18,7 @@
 	</properties>
 
 	<dependencies>
-	<dependency>
+		<dependency>
 			<groupId>org.ow2.spec.ee</groupId>
 			<artifactId>ow2-jpa-2.0-spec</artifactId>
 			<scope>provided</scope>

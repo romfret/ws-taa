@@ -84,7 +84,7 @@ public class CreateServiceImpl extends RemoteServiceServlet implements
 	 */
 	public String getPersonIdWithMailAddress(String mail) {
 		init();
-		return serv.findPersonIdWithMailAddress(mail);
+		return serv.getPersonIdByMailAddress(mail);
 	}
 
 	public void addFriendToUser(long idUser, long idFriend) {

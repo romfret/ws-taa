@@ -12,6 +12,10 @@
 		<servlet-name>createService</servlet-name>
 		<servlet-class>fr.istic.server.CreateServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>compareService</servlet-name>
+		<servlet-class>fr.istic.server.CompareServiceImpl</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>greetServlet</servlet-name>
@@ -20,6 +24,10 @@
 	<servlet-mapping>
 		<servlet-name>createService</servlet-name>
 		<url-pattern>/firstgwt/createService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>compareService</servlet-name>
+		<url-pattern>/firstgwt/compareService</url-pattern>
 	</servlet-mapping>
 
 

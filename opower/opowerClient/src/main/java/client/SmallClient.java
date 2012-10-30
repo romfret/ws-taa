@@ -22,6 +22,7 @@ public class SmallClient {
 	 */
 	public static void main(String[] args) throws NamingException {
 		BusinessInterface serv = (BusinessInterface) getInitialContext().lookup("businessImpl");
+		
 		serv.init();
 		serv.createPerson("lastName", "firstName", "email");
 		
