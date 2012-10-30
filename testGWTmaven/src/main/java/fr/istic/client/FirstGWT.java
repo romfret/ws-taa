@@ -37,7 +37,10 @@ public class FirstGWT implements EntryPoint {
 		AbsolutePanel compareOverallConsPanel = getCompareOverallConsPanel();
 		AbsolutePanel addHomePanel = getAddHomePanel();
 		AbsolutePanel addElectronicDevicePanel = getAddElectronicDevicePanel();
+		AbsolutePanel compareElectronicDevicesConsPanel = getCompareElectronicDevicesConsPanel();
 		AbsolutePanel addHeaterPanel = getAddHeaterPanel();
+		AbsolutePanel compareHeatersConsPanel = getCompareHeatersConsPanel();
+		
 		AbsolutePanel getUserIdPanel = getGetUserIdPanel();	
 		
 		// ------------ USER TAB PANEL --------------
@@ -82,6 +85,7 @@ public class FirstGWT implements EntryPoint {
 
 		// homeTabPanel.add(null, "Show");
 		electronicDeviceTabPanel.add(addElectronicDevicePanel, "Add");
+		electronicDeviceTabPanel.add(compareElectronicDevicesConsPanel, "Compare !");
 		// homeTabPanel.add(null, "Delete");
 
 		
@@ -95,6 +99,7 @@ public class FirstGWT implements EntryPoint {
 
 		// homeTabPanel.add(null, "Show");
 		heaterTabPanel.add(addHeaterPanel, "Add");
+		heaterTabPanel.add(compareHeatersConsPanel, "Compare !");
 		// homeTabPanel.add(null, "Delete");
 
 		
@@ -447,12 +452,115 @@ public class FirstGWT implements EntryPoint {
 					}
 
 					public void onSuccess(Integer arg0) {
-						resultLabel.setText(arg0.toString());
+						if(arg0>0){
+							resultLabel.setText("The second person consumme " + arg0.toString() + "W/h more than the first person.");
+						} else if (arg0==0){
+							resultLabel.setText("The two persons consumme the same power.");
+						} else {
+							resultLabel.setText("The first person consumme " + Math.abs(arg0) + "W/h more than the second person.");
+						}
 					}
 				});
 			}
 		});
 		return compareOverallConsPanel;
 	}
+
+	private AbsolutePanel getCompareHeatersConsPanel() {
+		final Button compareButton = new Button("Comparer !");
+		compareButton.addStyleName("sendButton");
+
+		Label mail1Label = new Label("e-mail 1 :");
+		final TextBox mail1Field = new TextBox();
+		mail1Field.setText("");
+		
+		Label mail2Label = new Label("e-mail 2 :");
+		final TextBox mail2Field = new TextBox();
+		mail2Field.setText("");
+		
+		final Label resultLabel = new Label("Result :");
+
+		AbsolutePanel compareOverallConsPanel = new AbsolutePanel();
+		compareOverallConsPanel.add(mail1Label, 10, 20);
+		compareOverallConsPanel.add(mail1Field, 70, 20);
+		compareOverallConsPanel.add(mail2Label, 10, 50);
+		compareOverallConsPanel.add(mail2Field, 70, 50);
+		compareOverallConsPanel.add(compareButton, 30, 80);
+		compareOverallConsPanel.add(resultLabel, 10, 110);
+		
+		compareButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				compareService.compareHeatersConsummation(mail1Field.getText(), mail2Field.getText(),
+						new AsyncCallback<Integer>() {
+
+					public void onFailure(Throwable arg0) {
+						Window.alert("Erreur durant la comparaison :" + arg0.getMessage());
+
+					}
+
+					public void onSuccess(Integer arg0) {
+						if(arg0>0){
+							resultLabel.setText("The second person consumme " + arg0.toString() + "W/h more than the first person.");
+						} else if (arg0==0){
+							resultLabel.setText("The two persons consumme the same power.");
+						} else {
+							resultLabel.setText("The first person consumme " + Math.abs(arg0) + "W/h more than the second person.");
+						}
+					}
+				});
+			}
+		});
+		return compareOverallConsPanel;
+	} 
+	
+	private AbsolutePanel getCompareElectronicDevicesConsPanel() {
+		final Button compareButton = new Button("Comparer !");
+		compareButton.addStyleName("sendButton");
+
+		Label mail1Label = new Label("e-mail 1 :");
+		final TextBox mail1Field = new TextBox();
+		mail1Field.setText("");
+		
+		Label mail2Label = new Label("e-mail 2 :");
+		final TextBox mail2Field = new TextBox();
+		mail2Field.setText("");
+		
+		final Label resultLabel = new Label("Result :");
+
+		AbsolutePanel compareOverallConsPanel = new AbsolutePanel();
+		compareOverallConsPanel.add(mail1Label, 10, 20);
+		compareOverallConsPanel.add(mail1Field, 70, 20);
+		compareOverallConsPanel.add(mail2Label, 10, 50);
+		compareOverallConsPanel.add(mail2Field, 70, 50);
+		compareOverallConsPanel.add(compareButton, 30, 80);
+		compareOverallConsPanel.add(resultLabel, 10, 110);
+		
+		compareButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				compareService.compareElectronicDevicesConsummation(mail1Field.getText(), mail2Field.getText(),
+						new AsyncCallback<Integer>() {
+
+					public void onFailure(Throwable arg0) {
+						Window.alert("Erreur durant la comparaison :" + arg0.getMessage());
+
+					}
+
+					public void onSuccess(Integer arg0) {
+						if(arg0>0){
+							resultLabel.setText("The second person consumme " + arg0.toString() + "W/h more than the first person.");
+						} else if (arg0==0){
+							resultLabel.setText("The two persons consumme the same power.");
+						} else {
+							resultLabel.setText("The first person consumme " + Math.abs(arg0) + "W/h more than the second person.");
+						}
+					}
+				});
+			}
+		});
+		return compareOverallConsPanel;
+	} 
+	
+	
+	
 
 }
