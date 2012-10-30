@@ -64,10 +64,17 @@ public class BusinessImplementation implements BusinessInterface  {
         alain.setMail("alain.de.loin.dtc@hadopi.fr");
         florent.addFriend(alain);
         
+        Person robert = new Person();
+        robert.setFirstName("Robert");
+        robert.setLastName("Redford");
+        robert.setMail("robert.redford.dtc@hadopi.fr");
+        florent.addFriend(robert);
+        
         this.entityManager.persist(fDevice);
         this.entityManager.persist(fHeater);
         this.entityManager.persist(fHome);
         this.entityManager.persist(alain);
+        this.entityManager.persist(robert);
         this.entityManager.persist(florent);
     }
 
