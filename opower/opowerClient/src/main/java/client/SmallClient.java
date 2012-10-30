@@ -1,15 +1,11 @@
 package client;
 
 import java.util.Hashtable;
-import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.swing.JPanel;
-
-import business.BusinessInterface;
-import fr.istic.entity.Person;
 
 public class SmallClient extends JPanel {
 	public SmallClient() {
@@ -28,15 +24,16 @@ public class SmallClient extends JPanel {
 	 * @throws NamingException
 	 */
 	public static void main(String[] args) throws NamingException {
-		BusinessInterface serv = (BusinessInterface) getInitialContext().lookup("businessImpl");		
-		serv.init();
-		
-		serv.createPerson("lastName", "firstName", "email");
-		
-		List<Person> persons = serv.getPersons();
-		for (Person person : persons) {
-			System.out.println(person.getFirstName());
-		}
+//		BusinessInterface serv = (BusinessInterface) getInitialContext().lookup("businessImpl");		
+//		serv.init();
+//		
+//		serv.createPerson("lastName", "firstName", "email");
+//		
+//		List<Person> persons = serv.getPersons();
+//		for (Person person : persons) {
+//			System.out.println(person.getFirstName());
+//		}
+		SmallClientSwing ihm = new SmallClientSwing();
 	}
 
 	/**
