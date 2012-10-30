@@ -6,11 +6,18 @@ import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.swing.JPanel;
 
 import business.BusinessInterface;
 import fr.istic.entity.Person;
 
-public class SmallClient {
+public class SmallClient extends JPanel {
+	public SmallClient() {
+	}
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6099849382011875415L;
 	/**
 	 * Use Smart Factory by default.
 	 */
@@ -21,9 +28,9 @@ public class SmallClient {
 	 * @throws NamingException
 	 */
 	public static void main(String[] args) throws NamingException {
-		BusinessInterface serv = (BusinessInterface) getInitialContext().lookup("businessImpl");
-		
+		BusinessInterface serv = (BusinessInterface) getInitialContext().lookup("businessImpl");		
 		serv.init();
+		
 		serv.createPerson("lastName", "firstName", "email");
 		
 		List<Person> persons = serv.getPersons();
