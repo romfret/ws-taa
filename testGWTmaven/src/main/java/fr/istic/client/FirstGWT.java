@@ -49,7 +49,7 @@ public class FirstGWT implements EntryPoint {
 		// userTabPanel.add(null, "Show");
 		userTabPanel.add(addUserPanel, "Add");
 		userTabPanel.add(addFriendToUserPanel, "Add Friend To User");
-		userTabPanel.add(addFriendToUserPanel, "Add Friend To User");
+		userTabPanel.add(compareOverallConsPanel, "Compare !");
 		
 
 		// ---------- USER ID TAB PANEL -------------
