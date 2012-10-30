@@ -22,8 +22,8 @@ public class FirstGWT implements EntryPoint {
 	 * Create a remote service proxy to talk to the server-side Greeting
 	 * service.
 	 */
-	private final GreetingServiceAsync greetingService = GWT
-			.create(GreetingService.class);
+	private final CompareServiceAsync compareService = GWT
+			.create(CompareService.class);
 	private final CreateServiceAsync createService = GWT
 			.create(CreateService.class);
 
@@ -34,13 +34,11 @@ public class FirstGWT implements EntryPoint {
 
 		AbsolutePanel addUserPanel = getAddUserPanel();
 		AbsolutePanel addFriendToUserPanel = getAddFriendToUserPanel();
+		AbsolutePanel compareOverallConsPanel = getCompareOverallConsPanel();
 		AbsolutePanel addHomePanel = getAddHomePanel();
 		AbsolutePanel addElectronicDevicePanel = getAddElectronicDevicePanel();
 		AbsolutePanel addHeaterPanel = getAddHeaterPanel();
-		AbsolutePanel getUserIdPanel = getGetUserIdPanel();
-		
-
-		
+		AbsolutePanel getUserIdPanel = getGetUserIdPanel();	
 		
 		// ------------ USER TAB PANEL --------------
 		TabLayoutPanel userTabPanel = new TabLayoutPanel(2, Unit.EM);
@@ -51,7 +49,7 @@ public class FirstGWT implements EntryPoint {
 		// userTabPanel.add(null, "Show");
 		userTabPanel.add(addUserPanel, "Add");
 		userTabPanel.add(addFriendToUserPanel, "Add Friend To User");
-		
+		userTabPanel.add(addFriendToUserPanel, "Add Friend To User");
 		
 
 		// ---------- USER ID TAB PANEL -------------
@@ -136,14 +134,14 @@ public class FirstGWT implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				createService.getPersonIdWithMailAddress(
 						mailGetUserIdField.getText(),
-						new AsyncCallback<String>() {
+						new AsyncCallback<Long>() {
 
 							public void onFailure(Throwable caught) {
 								Window.alert("Erreur de connection.\n\n"
 										+ caught.toString());
 							}
 
-							public void onSuccess(String result) {
+							public void onSuccess(Long result) {
 								Window.alert("Voici l'id associé à votre adresse mail : "
 										+ result);
 							}
@@ -193,15 +191,16 @@ public class FirstGWT implements EntryPoint {
 						modelAddHeaterField.getText(),
 						Integer.parseInt(powerAddHeaterField.getText()),
 						Long.parseLong(homeIdAddHeaterField.getText()),
-						new AsyncCallback<Void>() {
+						new AsyncCallback<Integer>() {
 
 							public void onFailure(Throwable arg0) {
 								Window.alert("fail");
 
 							}
 
-							public void onSuccess(Void arg0) {
-								Window.alert("Heater ajoute avec succes");
+							public void onSuccess(Integer arg0) {
+								if (arg0 == 0) Window.alert("Heater ajoute avec succes");
+								else Window.alert("Erreur lors de l'ajout du Heater");
 							}
 						});
 			}
@@ -252,13 +251,14 @@ public class FirstGWT implements EntryPoint {
 						typeAddElectronicDeviceField.getText(),
 						Integer.parseInt(powerAddElectronicDeviceField.getText()),
 						Long.parseLong(personIdAddElectronicDeviceField.getText()),
-						new AsyncCallback<Void>() {
+						new AsyncCallback<Integer>() {
 							public void onFailure(Throwable caught) {
 								Window.alert("Erreur de connection.\n\n"
 										+ caught.toString());
 							}
-							public void onSuccess(Void arg0) {
-								Window.alert("Electronic Device ajoute avec succes");
+							public void onSuccess(Integer arg0) {
+								if (arg0 == 0) Window.alert("Electronic Device ajoute avec succes");
+								else Window.alert("Erreur lors de l'ajout de l'Electronic Device");
 							}
 						});
 			}
@@ -310,15 +310,16 @@ public class FirstGWT implements EntryPoint {
 						addressAddHomeField.getText(),
 						townAddHomeField.getText(), zipAddHomeField.getText(),
 						Long.parseLong(personIdAddHomeField.getText()),
-						new AsyncCallback<String>() {
+						new AsyncCallback<Integer>() {
 
 							public void onFailure(Throwable caught) {
 								Window.alert("Erreur de connection.\n\n"
 										+ caught.toString());
 							}
 
-							public void onSuccess(String result) {
-								Window.alert(result);
+							public void onSuccess(Integer arg0) {
+								if (arg0 == 0) Window.alert("Home ajoutee avec succes");
+								else Window.alert("Erreur lors de l'ajout de l'Home");
 							}
 						});
 			}
@@ -356,16 +357,15 @@ public class FirstGWT implements EntryPoint {
 				createService.addUser(firstNameAddUserField.getText(),
 						lastNameAddUserField.getText(),
 						mailAddUserField.getText(),
-						new AsyncCallback<String>() {
+						new AsyncCallback<Integer>() {
 
-							public void onSuccess(String result) {
-								Window.alert("succes\n\nVeuillez noter votre ID, celui-si vous sera demandé par la suite : "
-										+ result);
+							public void onSuccess(Integer arg0) {
+								if (arg0 == 0) Window.alert("User ajoute avec succes");
+								else Window.alert("Erreur lors de l'ajout de l'User");
 							}
 
 							public void onFailure(Throwable arg0) {
 								Window.alert("fail");
-
 							}
 						});
 			}
@@ -410,6 +410,49 @@ public class FirstGWT implements EntryPoint {
 			}
 		});
 		return addFriendToUserPanel;
+	}
+
+	private AbsolutePanel getCompareOverallConsPanel() {
+		final Button compareButton = new Button("Comparer !");
+		compareButton.addStyleName("sendButton");
+
+		Label mail1Label = new Label("e-mail 1 :");
+		final TextBox mail1Field = new TextBox();
+		mail1Field.setText("");
+		
+		Label mail2Label = new Label("e-mail 2 :");
+		final TextBox mail2Field = new TextBox();
+		mail2Field.setText("");
+		
+		final Label resultLabel = new Label("Result :");
+		
+		
+
+		AbsolutePanel compareOverallConsPanel = new AbsolutePanel();
+		compareOverallConsPanel.add(mail1Label, 10, 20);
+		compareOverallConsPanel.add(mail1Field, 70, 20);
+		compareOverallConsPanel.add(mail2Label, 10, 50);
+		compareOverallConsPanel.add(mail2Field, 70, 50);
+		compareOverallConsPanel.add(compareButton, 30, 80);
+		compareOverallConsPanel.add(resultLabel, 10, 110);
+		
+		compareButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				compareService.compareOverallConsummation(mail1Field.getText(), mail2Field.getText(),
+						new AsyncCallback<Integer>() {
+
+					public void onFailure(Throwable arg0) {
+						Window.alert("Erreur durant la comparaison :" + arg0.getMessage());
+
+					}
+
+					public void onSuccess(Integer arg0) {
+						resultLabel.setText(arg0.toString());
+					}
+				});
+			}
+		});
+		return compareOverallConsPanel;
 	}
 
 }

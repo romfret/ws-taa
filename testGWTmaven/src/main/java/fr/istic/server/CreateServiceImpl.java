@@ -33,23 +33,23 @@ public class CreateServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 
-	public String addUser(String firstName, String lastName, String email) {
+	public int addUser(String firstName, String lastName, String email) {
 		init();
 		return serv.createPerson(lastName, firstName, email);
 	}
 
-	public void addElectronicDevice(String name, String type, int power,
+	public int addElectronicDevice(String name, String type, int power,
 			long personId) {
 		init();
-		serv.createElectronicDevice(name, type, power, personId);
+		return serv.createElectronicDevice(name, type, power, personId);
 	}
 
-	public void addHeater(String name, String model, int power, long homeId) {
+	public int addHeater(String name, String model, int power, long homeId) {
 		init();
-		serv.createHeater(name, model, power, homeId);
+		return serv.createHeater(name, model, power, homeId);
 	}
 
-	public String addHome(String name, String address, String town, String zip,
+	public int addHome(String name, String address, String town, String zip,
 			long personId) {
 		init();
 		return serv.createHome(name, address, town, zip, personId);
@@ -82,7 +82,7 @@ public class CreateServiceImpl extends RemoteServiceServlet implements
 	/**
 	 * Retrouve l'id d'une personne grace a son adresse mail
 	 */
-	public String getPersonIdWithMailAddress(String mail) {
+	public long getPersonIdWithMailAddress(String mail) {
 		init();
 		return serv.getPersonIdByMailAddress(mail);
 	}

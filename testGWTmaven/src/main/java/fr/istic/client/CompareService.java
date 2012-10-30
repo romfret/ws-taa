@@ -7,14 +7,14 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface CompareService  extends RemoteService{
 	//return the difference between the overall consummation of person1 
 	//and the overall consummation of person2 
-	public int compareOverallConsummation(long person1Id, long person2Id);
+	public int compareOverallConsummation(String person1mail, String person2mail);
 
 	//return the difference between the heaters consummation of person1 
 	//and the heaters consummation of person2 
-	public int compareHeatersConsummation(long person1Id, long person2Id);
+	public int compareHeatersConsummation(String person1mail, String person2mail);
 	
 	//return the difference between the electronic devices consummation of person1 
 	//and the electronic devices consummation of person2 
-	public int compareElectronicDevicesConsummation(long person1Id, long person2Id);
+	public int compareElectronicDevicesConsummation(String person1mail, String person2mail);
 	
 }

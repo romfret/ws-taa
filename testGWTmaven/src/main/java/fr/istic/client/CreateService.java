@@ -9,15 +9,15 @@ import fr.istic.entity.Person;
 
 @RemoteServiceRelativePath("createService")
 public interface CreateService extends RemoteService{
-	public String addUser(String firstName, String lastName, String email);
-	public void addElectronicDevice(String name, String type, int power, long personId );
-	public void addHeater(String name, String model, int power, long homeId);
-	public String addHome(String name, String address, String town, String zip, long personId);
+	public int addUser(String firstName, String lastName, String email);
+	public int addElectronicDevice(String name, String type, int power, long personId );
+	public int addHeater(String name, String model, int power, long homeId);
+	public int addHome(String name, String address, String town, String zip, long personId);
 	
 	public List<Person> getPersons();
 	public String getAllOfPerson();
 	
-	public String getPersonIdWithMailAddress(String mail);
+	public long getPersonIdWithMailAddress(String mail);
 	
 	public void addFriendToUser(long idUser, long idFriend);
 	
