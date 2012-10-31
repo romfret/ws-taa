@@ -68,6 +68,7 @@ public class BusinessImplementation implements BusinessInterface  {
         robert.setFirstName("Robert");
         robert.setLastName("Redford");
         robert.setMail("robert.redford.dtc@hadopi.fr");
+        robert.addFriend(florent);
         florent.addFriend(robert);
         
         this.entityManager.persist(fDevice);
