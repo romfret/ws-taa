@@ -1,5 +1,8 @@
 package client;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -9,10 +12,18 @@ import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+
+import business.BusinessInterface;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.Hashtable;
 
 public class SmallClientSwing extends JFrame {
+	/**
+	 * Use Smart Factory by default.
+	 */
+	private static final String DEFAULT_INITIAL_CONTEXT_FACTORY = "org.ow2.easybeans.component.smartclient.spi.SmartContextFactory";
 
 	private static final long serialVersionUID = -1603136224097745591L;
 	private JPanel contentPane;
@@ -50,6 +61,8 @@ public class SmallClientSwing extends JFrame {
 	private JLabel lblMail2ComparePower;
 	private JTextField textFieldMail2ComparePower;
 	private JButton btnComparer;
+	private JButton btnComparer_2;
+	private JButton btnComparer_1;
 	
 	// Home.panelHomeLeft
 	private JPanel panelHomeLeft;
@@ -120,7 +133,7 @@ public class SmallClientSwing extends JFrame {
 	private JTextField textFieldRsultatCompareElectronicDevice;
 	private JLabel lblWattCompareElectronicDevice;
 
-
+	private BusinessInterface serv;
 	/**
 	 * Create the frame.
 	 */
@@ -128,6 +141,18 @@ public class SmallClientSwing extends JFrame {
 		setTitle("Opower, Le Client Lourd =)");
 		setSize(1280, 720);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		try {
+			serv = (BusinessInterface) getInitialContext().lookup(
+					"businessImpl");
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -180,7 +205,7 @@ public class SmallClientSwing extends JFrame {
 		btnAddPerson = new JButton("Ajouter personne");
 		btnAddPerson.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-			}
+				serv.createPerson(textFieldNomAddPerson.getText(), textFieldPrenomAddPerson.getText(), textFieldMailAddPerson.getText());			}
 		});
 		btnAddPerson.setBounds(10, 237, 150, 23);
 		panelPersonLeft.add(btnAddPerson);
@@ -219,6 +244,14 @@ public class SmallClientSwing extends JFrame {
 		textFieldMailAmiAddFriends.setColumns(10);
 		
 		btnAddFriend = new JButton("Ajouter ami");
+		btnAddFriend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				serv.addFriendToUser(
+						serv.getPersonIdByMailAddress(textFieldMailUtilisateurAddFriends.getText()), 
+						serv.getPersonIdByMailAddress(textFieldMailAmiAddFriends.getText())
+				);
+			}
+		});
 		btnAddFriend.setBounds(10, 208, 150, 23);
 		panelPersonLeftFriends.add(btnAddFriend);
 		
@@ -251,8 +284,19 @@ public class SmallClientSwing extends JFrame {
 		textFieldMail2ComparePower.setBounds(127, 161, 477, 20);
 		panelPersonRight.add(textFieldMail2ComparePower);
 		textFieldMail2ComparePower.setColumns(10);
-		
+
+		textFieldRsultatComparePower = new JTextField();
 		btnComparer = new JButton("Comparer !");
+		btnComparer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				int diff = serv.compareOverallConsummation (
+						serv.getPersonIdByMailAddress(textFieldMail1ComparePower.getText()), 
+						serv.getPersonIdByMailAddress(textFieldMail2ComparePower.getText())
+				);
+				textFieldRsultatComparePower.setText(String.valueOf(diff));
+			}
+		});
 		btnComparer.setBounds(10, 227, 150, 23);
 		panelPersonRight.add(btnComparer);
 		
@@ -260,7 +304,6 @@ public class SmallClientSwing extends JFrame {
 		lblRsultatComparePower.setBounds(10, 331, 107, 14);
 		panelPersonRight.add(lblRsultatComparePower);
 		
-		textFieldRsultatComparePower = new JTextField();
 		textFieldRsultatComparePower.setEditable(false);
 		textFieldRsultatComparePower.setBounds(127, 328, 175, 20);
 		panelPersonRight.add(textFieldRsultatComparePower);
@@ -335,7 +378,13 @@ public class SmallClientSwing extends JFrame {
 		btnAddHome = new JButton("Ajouter maison");
 		btnAddHome.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				addHome();
+				serv.createHome(
+						textFieldNomAddHome.getText(),
+						textFieldAdresseAddHome.getText(),
+						textFieldVilleAddHome.getText(),
+						textFieldCodePostalAddHome.getText(), 
+						serv.getPersonIdByMailAddress(textFieldMailAddHome.getText())
+				);
 			}
 		});
 		btnAddHome.setBounds(10, 342, 210, 23);
@@ -401,6 +450,15 @@ public class SmallClientSwing extends JFrame {
 		textFieldIdentifiantMaisonAddHeater.setColumns(10);
 		
 		btnAjouterRadiateur = new JButton("Ajouter radiateur");
+		btnAjouterRadiateur.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				serv.createHeater(
+						textFieldNomAddHeater.getText(), 
+						textFieldModleAddHeater.getText(), 
+						Integer.parseInt(textFieldPuissanceAddHeater.getText())
+						,  Long.parseLong(textFieldIdentifiantMaisonAddHeater.getText()));
+			}
+		});
 		btnAjouterRadiateur.setBounds(10, 277, 150, 23);
 		panelHeaterLeft.add(btnAjouterRadiateur);
 		
@@ -433,15 +491,24 @@ public class SmallClientSwing extends JFrame {
 		panelHeaterRight.add(textFieldMail2CompareHeater);
 		textFieldMail2CompareHeater.setColumns(10);
 		
-		btnComparer = new JButton("Comparer !");
-		btnComparer.setBounds(10, 227, 150, 23);
-		panelHeaterRight.add(btnComparer);
+		textFieldRsultatCompareHeater = new JTextField();
+		btnComparer_1 = new JButton("Comparer !");
+		btnComparer_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int diff = serv.compareHeatersConsummation(
+						serv.getPersonIdByMailAddress(textFieldMail1CompareHeater.getText()), 
+						serv.getPersonIdByMailAddress(textFieldMail2CompareHeater.getText()));
+				textFieldRsultatCompareHeater.setText(String.valueOf(diff));
+			}
+		});
+		btnComparer_1.setBounds(10, 227, 150, 23);
+		panelHeaterRight.add(btnComparer_1);
 		
 		lblRsultatCompareHeater = new JLabel("R\u00E9sultat :");
 		lblRsultatCompareHeater.setBounds(10, 331, 107, 14);
 		panelHeaterRight.add(lblRsultatCompareHeater);
 		
-		textFieldRsultatCompareHeater = new JTextField();
+		
 		textFieldRsultatCompareHeater.setEditable(false);
 		textFieldRsultatCompareHeater.setBounds(127, 328, 175, 20);
 		panelHeaterRight.add(textFieldRsultatCompareHeater);
@@ -507,7 +574,11 @@ public class SmallClientSwing extends JFrame {
 		btnAddElectronicDevice = new JButton("Ajouter appareil \u00E9lectronique");
 		btnAddElectronicDevice.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("maison !");
+			long t = serv.getPersonIdByMailAddress(textFieldMailAddElectronicDevice.getText());
+				serv.createElectronicDevice(textFieldNomAddElectronicDevice.getText(),
+						textFieldTypeAddElectronicDevice.getText(),
+						Integer.parseInt(textFieldPuissanceAddElectronicDevice.getText()),
+						t);
 			}
 		});
 		btnAddElectronicDevice.setBounds(10, 294, 210, 23);
@@ -543,15 +614,28 @@ public class SmallClientSwing extends JFrame {
 		panelElectronicDeviceRight.add(textFieldMail2CompareElectronicDevice);
 		textFieldMail2CompareElectronicDevice.setColumns(10);
 		
-		btnComparer = new JButton("Comparer !");
-		btnComparer.setBounds(10, 227, 150, 23);
-		panelElectronicDeviceRight.add(btnComparer);
+		textFieldRsultatCompareElectronicDevice = new JTextField();
+		btnComparer_2 = new JButton("Comparer !");
+		btnComparer_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				long t1 = serv.getPersonIdByMailAddress(textFieldMail1CompareElectronicDevice.getText());
+				long t2 = serv.getPersonIdByMailAddress(textFieldMail2CompareElectronicDevice.getText());
+
+				int diff = serv.compareElectronicDevicesConsummation(
+						t1, 
+						t2
+				);
+				textFieldRsultatCompareElectronicDevice.setText(String.valueOf(diff));
+			}
+		});
+		btnComparer_2.setBounds(10, 227, 150, 23);
+		panelElectronicDeviceRight.add(btnComparer_2);
 		
 		lblRsultatCompareElectronicDevice = new JLabel("R\u00E9sultat :");
 		lblRsultatCompareElectronicDevice.setBounds(10, 331, 107, 14);
 		panelElectronicDeviceRight.add(lblRsultatCompareElectronicDevice);
 		
-		textFieldRsultatCompareElectronicDevice = new JTextField();
+		
 		textFieldRsultatCompareElectronicDevice.setEditable(false);
 		textFieldRsultatCompareElectronicDevice.setBounds(127, 328, 175, 20);
 		panelElectronicDeviceRight.add(textFieldRsultatCompareElectronicDevice);
@@ -560,11 +644,46 @@ public class SmallClientSwing extends JFrame {
 		lblWattCompareElectronicDevice = new JLabel("Watt");
 		lblWattCompareElectronicDevice.setBounds(312, 331, 46, 14);
 		panelElectronicDeviceRight.add(lblWattCompareElectronicDevice);
-		
-		this.setVisible(true);
+	
 	}
 	
 	public void addHome() {
 		System.out.println("maison !");
+	}
+	
+	/**
+	 * @return Returns the InitialContext.
+	 * @throws NamingException
+	 *             If the Context cannot be created.
+	 */
+	private static Context getInitialContext() throws NamingException {
+
+		// if user don't use jclient/client container
+		// we can specify the InitialContextFactory to use
+		// But this is *not recommended*.
+		Hashtable<String, Object> env = new Hashtable<String, Object>();
+		env.put(Context.INITIAL_CONTEXT_FACTORY, getInitialContextFactory());
+
+		// Usually a simple new InitialContext() without any parameters is
+		// sufficent.
+		// return new InitialContext();
+		return new InitialContext(env);
+	}
+
+	/**
+	 * Returns a configurable InitialContextFactory classname.<br/>
+	 * Can be configured with the
+	 * <code>easybeans.client.initial-context-factory</code> System property.
+	 * 
+	 * @return Returns a configurable InitialContextFactory classname.
+	 */
+	private static String getInitialContextFactory() {
+		String prop = System
+				.getProperty("easybeans.client.initial-context-factory");
+		// If not found, use the default
+		if (prop == null) {
+			prop = DEFAULT_INITIAL_CONTEXT_FACTORY;
+		}
+		return prop;
 	}
 }

@@ -149,13 +149,17 @@ public class BusinessImplementation implements BusinessInterface  {
 	}
 	
 	public long getPersonIdByMailAddress(final String mail) {
+		System.out.println("getPErsonIdByemail");
         CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
         Root<Person> person = criteriaQuery.from(Person.class);
         criteriaQuery.select(person).where(criteriaBuilder.equal(person.get("mail"), mail));
         try {
-            return this.entityManager.createQuery(criteriaQuery).getSingleResult().getId();
+        	long res = this.entityManager.createQuery(criteriaQuery).getSingleResult().getId();
+        	System.out.println("tant="+res);
+            return res;
         } catch (NoResultException nre) {
+        	System.out.println("tante");
             return (Long) null;
         }
 	}
